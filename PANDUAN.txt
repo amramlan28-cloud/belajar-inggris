@@ -50,6 +50,17 @@ Latihan Ngomong
   Kata yang benar berwarna hijau, yang kurang tepat merah.
   Nilai 80% ke atas dianggap lulus.
 
+  Soal setoran ada 3 macam: tebak kata dari arti, dengar lalu
+  pilih arti, dan lengkapi kalimat rumpang.
+
+Susun Kalimat
+  Ketuk potongan kata sesuai urutan sampai jadi kalimat yang
+  benar. Bagus untuk melatih struktur kalimat (grammar).
+
+Dikte
+  Dengarkan kalimat, lalu ketik apa yang terdengar.
+  Melatih pendengaran (listening) dan ejaan.
+
 English Area
   Aplikasi menjadi lawan bicara (A), kamu menjawab (B).
   Centang "Mode tantangan" supaya hanya terlihat artinya dalam

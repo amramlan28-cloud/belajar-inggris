@@ -75,6 +75,11 @@ table.list { width: 100%; border-collapse: collapse; }
 table.list td, table.list th { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 10px 20px; border-radius: 999px; font-weight: 700; }
 
+.answer { min-height: 60px; border: 2px dashed #c7d2fe; border-radius: 14px; padding: 10px; margin: 12px 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+.wordbank { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.chip-w { background: #fff; border: 2px solid #c7d2fe; font-size: 19px; padding: 8px 14px; }
+.chip-w.sel { background: #e0e7ff; }
+
 /* HP */
 @media (max-width: 640px) {
   body { font-size: 16px; }

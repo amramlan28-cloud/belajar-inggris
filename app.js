@@ -224,6 +224,10 @@ function home() {
         <div class="d">Hafal ${DAILY_NEW} kata baru per hari, lalu setor (tes). Kata yang lupa diulang otomatis.</div></div>
       <div class="tile" onclick="speakList()"><div class="emo">🎤</div><div class="t">Latihan Ngomong</div>
         <div class="d">Dengar, tirukan, dan dapat nilai pengucapan.</div></div>
+      <div class="tile" onclick="arrangeStart()"><div class="emo">🧱</div><div class="t">Susun Kalimat</div>
+        <div class="d">Susun potongan kata jadi kalimat yang benar.</div></div>
+      <div class="tile" onclick="dictateStart()"><div class="emo">🎧</div><div class="t">Dikte</div>
+        <div class="d">Dengarkan kalimat, lalu ketik apa yang kamu dengar.</div></div>
       <div class="tile" onclick="dialogList()"><div class="emo">💬</div><div class="t">English Area</div>
         <div class="d">Percakapan: aplikasi jadi lawan bicara, kamu menjawab dengan suara.</div></div>
       <div class="tile" onclick="grammarList()"><div class="emo">🧩</div><div class="t">Grammar</div>
@@ -270,7 +274,7 @@ function vocabStart(extra = false) {
       <button class="big" onclick="home()">Kembali</button></div></div>`);
   }
   VS = { fresh, quiz: shuffle([...fresh, ...due]), i: 0, phase: fresh.length ? "learn" : "quiz", first: {}, wrongOnce: {}, right: 0, extra };
-  VS.quiz = VS.quiz.map((v, k) => ({ v, type: k % 2 }));
+  VS.quiz = VS.quiz.map((v, k) => ({ v, type: k % 3 }));
   vocabStep();
 }
 function vocabStep() {
@@ -292,7 +296,17 @@ function vocabStep() {
   const item = VS.quiz[VS.i], v = item.v;
   const others = shuffle(VOCAB.filter(x => x.w !== v.w && x.id !== v.id)).slice(0, 2);
   const opts = shuffle([v, ...others]);
-  const askEnglish = item.type === 0; // 0: arti → pilih kata Inggris, 1: dengar → pilih arti
+  // 0: arti → pilih kata Inggris, 1: dengar → pilih arti, 2: isi kalimat rumpang
+  const blank = item.type === 2 ? blankSentence(v) : null;
+  const askEnglish = item.type === 0 || (item.type === 2 && !blank);
+  if (blank) {
+    view(`<p class="muted">Setor: soal ${VS.i + 1} dari ${VS.quiz.length}</p>
+      <div class="bar"><div style="width:${100 * VS.i / VS.quiz.length}%"></div></div>
+      <div class="card"><div class="center"><h2>Lengkapi kalimatnya</h2>
+        <p class="phrase" style="font-size:24px">${esc(blank)}</p></div>
+      <div class="opts">${opts.map(o => `<button data-ok="${o.w === v.w}" onclick="vocabAnswer(this)">${esc(o.w)}</button>`).join("")}</div></div>`);
+    return;
+  }
   view(`<p class="muted">Setor: soal ${VS.i + 1} dari ${VS.quiz.length}</p>
     <div class="bar"><div style="width:${100 * VS.i / VS.quiz.length}%"></div></div>
     <div class="card"><div class="center">
@@ -301,14 +315,19 @@ function vocabStep() {
     </div><div class="opts">${opts.map(o => `<button data-ok="${o.w === v.w}" onclick="vocabAnswer(this)">${esc(askEnglish ? o.w : o.id)}</button>`).join("")}</div></div>`);
   if (!askEnglish) say(v.w);
 }
+function blankSentence(v) {
+  const pat = v.w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp("\\b" + pat + "(s|es|ed|d)?\\b", "i");
+  return re.test(v.ex) ? v.ex.replace(re, "_____") : null;
+}
 function vocabNext() { VS.i++; if (VS.i >= VS.fresh.length) { VS.phase = "quiz"; VS.i = 0; } vocabStep(); }
 function vocabAnswer(btn) {
   const item = VS.quiz[VS.i], v = item.v, ok = btn.dataset.ok === "true";
   document.querySelectorAll(".opts button").forEach(b => { b.disabled = true; if (b.dataset.ok === "true") b.classList.add("ok"); });
   if (!ok) btn.classList.add("no");
   if (!(v.w in VS.first)) VS.first[v.w] = ok;
-  if (ok) { VS.right++; addXP(5); say(v.w); }
-  else if (!VS.wrongOnce[v.w]) { VS.wrongOnce[v.w] = true; VS.quiz.push({ v, type: 1 - item.type }); } // diulang di akhir
+  if (ok) { VS.right++; addXP(5); say(item.type === 2 && blankSentence(v) ? v.ex : v.w); }
+  else if (!VS.wrongOnce[v.w]) { VS.wrongOnce[v.w] = true; VS.quiz.push({ v, type: (item.type + 1) % 3 }); } // diulang di akhir
   setTimeout(() => { VS.i++; VS.i < VS.quiz.length ? vocabStep() : vocabFinish(); }, ok ? 900 : 1800);
 }
 function vocabFinish() {
@@ -493,6 +512,98 @@ function grammarAns(btn) {
       <div class="row" style="justify-content:center"><button onclick="grammarOpen(${GQ.i})">Baca materi lagi</button>
       <button class="primary" onclick="grammarQuiz(${GQ.i})">Ulangi soal</button><button onclick="grammarList()">Materi lain</button></div></div>`);
   }, ok ? 1200 : 2000);
+}
+
+// ---------- susun kalimat ----------
+let SK = null;
+const tokens = s => s.replace(/[.!?]+$/, "").split(/\s+/);
+function pickPhrases(n, maxWords = 99) {
+  const p = me();
+  return shuffle(PHRASES.filter(x => x.lv <= p.level && tokens(x.en).length <= maxWords)).slice(0, n);
+}
+function arrangeStart() { SK = { list: pickPhrases(8, 10), i: 0, right: 0 }; arrangeNew(); }
+function arrangeNew() {
+  if (SK.i >= SK.list.length) {
+    return view(`<div class="card center"><h1>Selesai! 🧱</h1><div class="score">${SK.right} / ${SK.list.length}</div>
+      <p>kalimat benar di percobaan pertama</p><div class="row" style="justify-content:center">
+      <button class="primary big" onclick="arrangeStart()">Main lagi</button><button class="big" onclick="home()">Beranda</button></div></div>`);
+  }
+  const t = tokens(SK.list[SK.i].en);
+  let bank = shuffle(t);
+  for (let n = 0; n < 5 && t.length > 1 && bank.join(" ") === t.join(" "); n++) bank = shuffle(t);
+  Object.assign(SK, { bank, picked: [], tries: 0, done: false });
+  arrangeRender();
+}
+function arrangeRender(msg = "") {
+  const x = SK.list[SK.i];
+  view(`<p class="muted">Susun Kalimat · ${SK.i + 1} dari ${SK.list.length}</p>
+    <div class="bar"><div style="width:${100 * SK.i / SK.list.length}%"></div></div>
+    <div class="card center"><p class="muted">Artinya:</p><h2>🇮🇩 ${esc(x.id)}</h2>
+      <div class="answer">${SK.picked.map((k, j) => `<button class="chip-w sel" onclick="arrangeUnpick(${j})" ${SK.done ? "disabled" : ""}>${esc(SK.bank[k])}</button>`).join("") || '<span class="muted">Ketuk kata di bawah sesuai urutan</span>'}</div>
+      <div class="wordbank">${SK.bank.map((w, k) => SK.picked.includes(k) ? "" : `<button class="chip-w" onclick="arrangePick(${k})">${esc(w)}</button>`).join("")}</div>
+      <div id="result">${msg}</div>
+      <div class="row" style="justify-content:center;margin-top:10px">
+        ${SK.done ? `<button class="primary big" onclick="SK.i++;arrangeNew()">Lanjut ➡️</button>`
+          : `<button onclick="SK.picked=[];arrangeRender()">Ulang</button>
+             <button class="green big" onclick="arrangeCheck()" ${SK.picked.length === SK.bank.length ? "" : "disabled"}>Cek ✔️</button>`}
+      </div></div><button onclick="home()">Keluar</button>`);
+}
+function arrangePick(k) { SK.picked.push(k); arrangeRender(); }
+function arrangeUnpick(j) { SK.picked.splice(j, 1); arrangeRender(); }
+function arrangeCheck() {
+  const x = SK.list[SK.i], target = tokens(x.en).join(" ");
+  const ok = SK.picked.map(k => SK.bank[k]).join(" ") === target;
+  SK.tries++;
+  if (ok) {
+    if (SK.tries === 1) SK.right++;
+    SK.done = true; addXP(5); say(x.en);
+    return arrangeRender(`<p class="w-ok" style="font-size:22px">Benar! 🎉</p>`);
+  }
+  if (SK.tries >= 2) {
+    SK.done = true; say(x.en);
+    return arrangeRender(`<p>Jawaban yang benar:</p><p class="phrase" style="font-size:22px">${esc(x.en)}</p>`);
+  }
+  SK.picked = [];
+  arrangeRender(`<p class="w-no">Belum tepat, coba sekali lagi 💪</p>`);
+}
+
+// ---------- dikte ----------
+let DK = null;
+function dictateStart() { DK = { list: pickPhrases(8), i: 0, scores: [], checked: -1 }; dictateStep(); }
+function dictateStep() {
+  if (DK.i >= DK.list.length) {
+    const avg = Math.round(DK.scores.reduce((a, b) => a + b, 0) / DK.scores.length);
+    return view(`<div class="card center"><h1>Dikte selesai! 🎧</h1><div class="score">${avg}%</div><p>rata-rata ketepatan</p>
+      <div class="row" style="justify-content:center"><button class="primary big" onclick="dictateStart()">Main lagi</button>
+      <button class="big" onclick="home()">Beranda</button></div></div>`);
+  }
+  const x = DK.list[DK.i];
+  view(`<p class="muted">Dikte · ${DK.i + 1} dari ${DK.list.length}</p>
+    <div class="bar"><div style="width:${100 * DK.i / DK.list.length}%"></div></div>
+    <div class="card center"><h2>Dengarkan, lalu ketik kalimatnya</h2>
+      <div class="row" style="justify-content:center"><button class="primary big" onclick='say(${attr(x.en)})'>🔊 Dengar</button>
+      <button class="big" onclick='say(${attr(x.en)},true)'>🐢 Pelan</button></div><p></p>
+      <input type="text" id="dictIn" style="max-width:100%" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ketik di sini..."
+        onkeydown="if(event.key==='Enter')dictateCheck()">
+      <div id="result"></div>
+      <div class="row" style="justify-content:center;margin-top:10px" id="dictBtns">
+        <button class="green big" onclick="dictateCheck()">Cek ✔️</button></div></div>
+    <button onclick="home()">Keluar</button>`);
+  say(x.en);
+  $("dictIn").focus();
+}
+function dictateCheck() {
+  const x = DK.list[DK.i], typed = $("dictIn").value.trim();
+  if (!typed) { toast("Ketik dulu ya"); return; }
+  if (DK.checked === DK.i) return;
+  DK.checked = DK.i;
+  const r = compare(x.en, typed);
+  DK.scores.push(r.score);
+  if (r.score >= PASS_SPEAK) addXP(5);
+  $("dictIn").disabled = true;
+  $("result").innerHTML = `<div class="score" style="color:${r.score >= PASS_SPEAK ? "#16a34a" : "#f59e0b"}">${r.score}%</div>
+    <p style="font-size:20px">${coloredWords(r)}</p><p><b>${esc(x.en)}</b><br><span class="muted">${esc(x.id)}</span></p>`;
+  $("dictBtns").innerHTML = `<button class="primary big" onclick="DK.i++;dictateStep()">Lanjut ➡️</button>`;
 }
 
 // ---------- kamus ----------
