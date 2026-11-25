@@ -75,3 +75,19 @@ Progres tersimpan di browser laptop ini.
     progres bisa hilang.
   - Selalu buka lewat "Mulai Belajar.bat" dengan browser yang
     sama supaya progresnya tetap terbaca.
+
+
+----------------------------------------------------------------
+5. MEMAKAI DI HP
+----------------------------------------------------------------
+
+Buka alamat ini di Chrome (Android) atau Safari (iPhone):
+
+  https://amramlan28-cloud.github.io/belajar-inggris/
+
+Supaya muncul seperti aplikasi di layar HP:
+  - Android (Chrome): menu titik tiga > "Tambahkan ke layar utama"
+  - iPhone (Safari): tombol Bagikan > "Add to Home Screen"
+
+Progres di HP terpisah dari progres di laptop. Setiap HP
+menyimpan profilnya sendiri.
