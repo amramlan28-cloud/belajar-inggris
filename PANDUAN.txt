@@ -1,0 +1,77 @@
+PANDUAN APLIKASI "KAMPUNG INGGRIS DI RUMAH"
+================================================================
+
+Aplikasi belajar bahasa Inggris untuk keluarga, mengikuti cara
+belajar di Kampung Inggris Pare:
+  - setoran kosakata setiap hari
+  - langsung latihan ngomong
+  - grammar singkat
+  - "English Area" (latihan percakapan)
+
+
+----------------------------------------------------------------
+1. MEMBUKA APLIKASI
+----------------------------------------------------------------
+
+Dobel-klik "Mulai Belajar.bat".
+Browser akan terbuka sendiri. Jendela hitam yang ikut muncul
+JANGAN ditutup selama belajar, karena jendela itu yang
+menjalankan aplikasinya. Tutup jendela hitam setelah selesai.
+
+Gunakan Google Chrome atau Microsoft Edge.
+Saat pertama kali menekan tombol mikrofon, browser akan minta
+izin: klik "Allow" / "Izinkan".
+
+Catatan: fitur mikrofon (dinilai pengucapannya) butuh internet.
+Fitur lain bisa dipakai tanpa internet.
+
+
+----------------------------------------------------------------
+2. PROFIL KELUARGA
+----------------------------------------------------------------
+
+Setiap anggota keluarga punya profil sendiri dengan nilai,
+bintang, dan jadwal hafalan masing-masing.
+Profil baru langsung mengikuti tes penempatan (15 soal) untuk
+menentukan level: Pemula, Dasar, atau Menengah.
+
+
+----------------------------------------------------------------
+3. MENU BELAJAR
+----------------------------------------------------------------
+
+Setoran Kosakata
+  Hafalkan 10 kata baru per hari, lalu "setor" (jawab soal).
+  Kata yang salah diulang lebih sering. Kata yang benar
+  diulang makin jarang (1, 2, 4, 7, 15, 30 hari), sampai hafal.
+
+Latihan Ngomong
+  Dengarkan contoh, tekan "Bicara", lalu tirukan.
+  Kata yang benar berwarna hijau, yang kurang tepat merah.
+  Nilai 80% ke atas dianggap lulus.
+
+English Area
+  Aplikasi menjadi lawan bicara (A), kamu menjawab (B).
+  Centang "Mode tantangan" supaya hanya terlihat artinya dalam
+  bahasa Indonesia, lalu jawab langsung dalam bahasa Inggris.
+
+Grammar
+  Materi singkat dalam bahasa Indonesia, lalu 5 soal latihan.
+
+Kamusku
+  Daftar semua kata yang sudah dipelajari, lengkap dengan
+  bintang hafalan (5 bintang = sudah hafal).
+
+Target harian: setoran kosakata selesai + 5 kalimat latihan
+ngomong. Belajar setiap hari menambah "hari beruntun" (🔥).
+
+
+----------------------------------------------------------------
+4. PENTING
+----------------------------------------------------------------
+
+Progres tersimpan di browser laptop ini.
+  - Jangan hapus "browsing data / cookies" browser, karena
+    progres bisa hilang.
+  - Selalu buka lewat "Mulai Belajar.bat" dengan browser yang
+    sama supaya progresnya tetap terbaca.
